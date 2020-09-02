@@ -110,6 +110,25 @@ static uint64_t mod_inverse(uint64_t a, uint64_t b) {
     return x;
 }
 
+static uint64_t right_to_left(uint64_t value, uint64_t exp, uint64_t mod) {
+    uint64_t ret = 1ULL;
+    
+    if (mod == 1ULL)
+        return 0ULL;
+    
+    value %= mod;
+    
+    while (exp > 0ULL) {
+        if (exp % 2 == 1) {
+            ret = (ret * value) % mod;
+        }
+        exp >>= 1;
+        value = (value * value) % mod;
+    }
+    
+    return ret;
+}
+
 rsa_t RSA_keygen() {
     rsa_t ret = { 0ULL };
     uint32_t p;
@@ -128,4 +147,12 @@ rsa_t RSA_keygen() {
     ret.d = mod_inverse(ret.e, ret.phi);
     
     return ret;
+}
+
+inline uint64_t RSA_encrypt(uint64_t *msg, rsa_t *key) {
+    return right_to_left(msg, key->e, key->n);
+}
+
+inline uint64_t RSA_decrypt(uint64_t *text, rsa_t *key) {
+    return right_to_left(text, key->d, key->n);
 }
