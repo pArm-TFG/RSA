@@ -111,6 +111,10 @@ static int_fast64_t right_to_left(
 }
 
 static bool is_valid_key(rsa_t *key) {
+    if (key->d <= 0LL) {
+        return false;
+    }
+
     static const char *test_msg = "RSATEST";
     static const int_fast8_t length = 8;
     bool keys_ok = true;
@@ -151,7 +155,7 @@ rsa_t RSA_keygen() {
         ret.n = n;
         ret.phi = phi;
         ret.d = mod_inverse(ret.e, ret.phi);
-    } while ((ret.d < 0LL) && (!is_valid_key(&ret)));
+    } while (!is_valid_key(&ret));
 
     return ret;
 }
