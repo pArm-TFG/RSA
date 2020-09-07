@@ -2,7 +2,7 @@
  * File: rsa.c
  * Author: Javinator9889
  * Comments: RSA file with necessary functions
- * Revision history: v1.0
+ * Revision history: v1.1
  */
 
 /*******************************************************************************
@@ -28,75 +28,77 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 #include "../utils/rand.h"
 #include "rsa.h"
+#include "primes.h"
 
+static const int_fast64_t e = (int_fast64_t) ((2 << 15) + 1ULL);
 
-static const uint64_t e = (uint64_t) ((2 << 15) + 1ULL);
+static int_fast64_t gcd(int_fast64_t u, int_fast64_t v) {
+    int_fast64_t shift;
+    if (u == 0ULL)
+        return v;
+    if (v == 0ULL)
+        return u;
 
-static uint64_t gcd(uint64_t u, uint64_t v) {
-    uint64_t shift;
-    if (u == 0ULL) return v;
-    if (v == 0ULL) return u;
-    
     shift = __builtin_ctzll(u | v);
     u >>= __builtin_ctzll(u);
-    
+
     do {
         v >>= __builtin_ctzll(v);
         if (u > v) {
-            uint64_t temp = v;
+            int_fast64_t temp = v;
             v = u;
             u = temp;
         }
         v -= u;
     } while (v != 0ULL);
-    
+
     return u << shift;
 }
 
-static inline bool check_valid_phi(uint64_t *phi) {
-    return gcd(e, *phi) != 1ULL;
-}
+// Returns modulo inverse of a with respect
+// to m using extended Euclid Algorithm
+// Assumption: a and m are coprimes, i.e.,
+// gcd(a, m) = 1
+static int_fast64_t mod_inverse(int_fast64_t a, int_fast64_t b) {
+    int_fast64_t m0 = b;
+    int_fast64_t x = 1;
+    int_fast64_t y = 0;
 
-// Returns modulo inverse of a with respect 
-// to m using extended Euclid Algorithm 
-// Assumption: a and m are coprimes, i.e., 
-// gcd(a, m) = 1 
-static uint64_t mod_inverse(uint64_t a, uint64_t b) {
-    uint64_t m0 = b;
-    uint64_t x = 1;
-    uint64_t y = 0;
-    
     if (b == 1)
         return 0ULL;
-    
+
     while (a > 1) {
-        uint64_t quotient = (uint64_t) (a / b);
-        uint64_t temp = b;
-        
+        int_fast64_t quotient = (int_fast64_t) (a / b);
+        int_fast64_t temp = b;
+
         b = a % b;
         a = temp;
         temp = y;
-        
+
         y = x - quotient * y;
         x = temp;
     }
-    
+
     if (x < 0)
         x += m0;
-    
+
     return x;
 }
 
-static uint64_t right_to_left(uint64_t value, uint64_t exp, uint64_t mod) {
-    uint64_t ret = 1ULL;
-    
+static int_fast64_t right_to_left(
+        int_fast64_t value,
+        int_fast64_t exp,
+        int_fast64_t mod) {
+    int_fast64_t ret = 1ULL;
+
     if (mod == 1ULL)
         return 0ULL;
-    
+
     value %= mod;
-    
+
     while (exp > 0ULL) {
         if (exp % 2 == 1) {
             ret = (ret * value) % mod;
@@ -104,34 +106,60 @@ static uint64_t right_to_left(uint64_t value, uint64_t exp, uint64_t mod) {
         exp >>= 1;
         value = (value * value) % mod;
     }
-    
+
     return ret;
+}
+
+static bool is_valid_key(rsa_t *key) {
+    static const char *test_msg = "RSATEST";
+    static const int_fast8_t length = 8;
+    bool keys_ok = true;
+    int_fast64_t enc_msg[length] = {0LL};
+    for (int_fast8_t i = 0; i < length; ++i) {
+        enc_msg[i] = RSA_encrypt(test_msg[i], key);
+    }
+
+    for (int_fast8_t i = 0; (i < length) && (keys_ok == true); ++i) {
+        char dec_char = RSA_decrypt(enc_msg[i], key);
+        keys_ok = (dec_char == test_msg[i]);
+    }
+
+    return keys_ok;
 }
 
 rsa_t RSA_keygen() {
-    rsa_t ret = { 0ULL };
-    uint32_t p;
-    uint32_t q;
-    
+    rsa_t ret = {0LL};
+    ret.e = e;
+    int_fast64_t p;
+    int_fast64_t q;
+    int_fast64_t n;
+    int_fast64_t phi;
+
     do {
-        p = (uint32_t) RAND(MIN_PRIME_NUMBER, MAX_PRIME_NUMBER);
-    } while (p % 2 == 0 && p % e == 1);
-    
-    do {
-        q = (uint32_t) RAND(MIN_PRIME_NUMBER, MAX_PRIME_NUMBER);
-    } while (q % 2 == 0 && q % e == 1);
-    
-    ret.n = (p * q);
-    ret.phi = (p - 1) * (q - 1);
-    ret.d = mod_inverse(ret.e, ret.phi);
-    
+        do {
+            do {
+                do {
+                    p = RAND(MIN_PRIME_NUMBER, MAX_PRIME_NUMBER);
+                } while (check_prime(p, 5) == false);
+                do {
+                    q = RAND(MIN_PRIME_NUMBER, MAX_PRIME_NUMBER);
+                } while (check_prime(q, 5) == false);
+            } while (gcd(p, q) != 1ULL);
+            n = p * q;
+            phi = (p - 1ULL) * (q - 1ULL);
+        } while (gcd(e, phi) != 1ULL);
+        ret.n = n;
+        ret.phi = phi;
+        ret.d = mod_inverse(ret.e, ret.phi);
+    } while ((ret.d < 0LL) && (!is_valid_key(&ret)));
+
     return ret;
 }
 
-inline uint64_t RSA_encrypt(uint64_t *msg, rsa_t *key) {
+inline int_fast64_t RSA_encrypt(int_fast64_t msg, rsa_t *key) {
     return right_to_left(msg, key->e, key->n);
 }
 
-inline uint64_t RSA_decrypt(uint64_t *text, rsa_t *key) {
+inline int_fast64_t RSA_decrypt(int_fast64_t text, rsa_t *key) {
     return right_to_left(text, key->d, key->n);
 }
