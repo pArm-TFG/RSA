@@ -32,27 +32,6 @@
 #include "rsa.h"
 
 
-/*static uint64_t gcd(uint64_t a, uint64_t b) {
-    uint64_t q, r1, r2, r;
-    
-    if (a > b) {
-        r1 = a;
-        r2 = b;
-    } else {
-        r1 = b;
-        r2 = a;
-    }
-    
-    while (r2 > 0) {
-        q = r1 / r2;
-        r = r1 - q * r2;
-        r1 = r2;
-        r2 = r;
-    }
-    
-    return r1;
-}*/
-
 static const uint64_t e = (uint64_t) ((2 << 15) + 1ULL);
 
 static uint64_t gcd(uint64_t u, uint64_t v) {

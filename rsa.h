@@ -23,7 +23,7 @@
  * File: rsa.h
  * Author: Javinator9889
  * Comments: RSA header file which common types and functions
- * Revision history: v1.0
+ * Revision history: v1.1
  */
 
 /*******************************************************************************
@@ -53,26 +53,20 @@
 #include <stdint.h>
 
 /**
- * Limit to be used for calls to sieve algorithm if necessary
- */
-#define RSA_SIEVE_LIMIT 200000ULL
-
-/**
  * Prime number limits
  */
 #define MIN_PRIME_NUMBER 12049ULL
-#define MAX_PRIME_NUMBER 185621ULL
+#define MAX_PRIME_NUMBER 1299827ULL
 
 typedef struct {
-    uint64_t n;
-    uint64_t phi;
-    uint64_t e;
-    uint64_t d;
+    int_fast64_t n;
+    int_fast64_t phi;
+    int_fast64_t e;
+    int_fast64_t d;
 } rsa_t;
 
 rsa_t RSA_keygen(void);
-uint64_t RSA_encrypt(uint64_t *msg, rsa_t *key);
-uint64_t RSA_decrypt(uint64_t *text, rsa_t *key);
+int_fast64_t RSA_encrypt(int_fast64_t msg, rsa_t *key);
+int_fast64_t RSA_decrypt(int_fast64_t text, rsa_t *key);
 
 #endif	/* RSA_H */
-
