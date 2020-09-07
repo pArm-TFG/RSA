@@ -114,7 +114,7 @@ static bool is_valid_key(rsa_t *key) {
     static const char *test_msg = "RSATEST";
     static const int_fast8_t length = 8;
     bool keys_ok = true;
-    int_fast64_t enc_msg[length] = {0LL};
+    int_fast64_t enc_msg[8] = {0LL};
     for (int_fast8_t i = 0; i < length; ++i) {
         enc_msg[i] = RSA_encrypt(test_msg[i], key);
     }
