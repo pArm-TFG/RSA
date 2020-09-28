@@ -29,8 +29,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
-#include "../utils/rand.h"
-#include "../utils/zeros.h"
+#include "rand.h"
+#include "zeros.h"
 #include "rsa.h"
 #include "primes.h"
 
