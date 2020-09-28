@@ -8,10 +8,9 @@
 #include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "time.h"
 #include "rand.h"
 
-time_t _ns = 0ULL;
+extern time_t _ns;
 bool _rand_init = false;
 
 void RAND_init(void) {
@@ -48,9 +47,4 @@ inline int RAND_random(void) {
     if (!_rand_init)
         return 0;
     return rand();
-}
-
-void __attribute__((interrupt, no_auto_psv)) _T6Interrupt() {
-    _ns += (TIME_now_us() * 1000ULL) + 50ULL;
-    IFS2bits.T6IF = false;
 }

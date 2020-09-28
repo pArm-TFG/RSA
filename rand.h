@@ -32,6 +32,12 @@
 #define	RAND_H
 
 #include <stdlib.h>
+#include <stdint.h>
+
+#ifndef time_t
+typedef uint64_t time_t;
+#define time_t time_t
+#endif
 
 void RAND_init(void);
 void RAND_init_seed(void);
