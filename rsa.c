@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "../utils/rand.h"
+#include "../utils/zeros.h"
 #include "rsa.h"
 #include "primes.h"
 
@@ -42,11 +43,11 @@ static int_fast64_t gcd(int_fast64_t u, int_fast64_t v) {
     if (v == 0ULL)
         return u;
 
-    shift = __builtin_ctzll(u | v);
-    u >>= __builtin_ctzll(u);
+    shift = ctz(u | v);
+    u >>= ctz(u);
 
     do {
-        v >>= __builtin_ctzll(v);
+        v >>= ctz(v);
         if (u > v) {
             int_fast64_t temp = v;
             v = u;
