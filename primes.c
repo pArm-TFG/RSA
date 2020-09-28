@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "primes.h"
-#include "../utils/rand.h"
+#include "rand.h"
 
 /* 
  * calculates (a * b) % c taking into account that a * b might overflow 

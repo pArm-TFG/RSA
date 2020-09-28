@@ -8,7 +8,6 @@
 #include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "types.h"
 #include "time.h"
 #include "rand.h"
 
