@@ -11,7 +11,7 @@
 #include "rand.h"
 
 extern time_t _ns;
-bool _rand_init = false;
+static bool _rand_init = false;
 
 void RAND_init(void) {
     //TMR6 0; 
