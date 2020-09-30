@@ -68,5 +68,6 @@ typedef struct {
 rsa_t RSA_keygen(void);
 int_fast64_t RSA_encrypt(int_fast64_t msg, rsa_t *key);
 int_fast64_t RSA_decrypt(int_fast64_t text, rsa_t *key);
+int_fast64_t RSA_sign(int_fast64_t msg, rsa_t *key);
 
 #endif	/* RSA_H */

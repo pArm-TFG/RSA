@@ -165,6 +165,10 @@ inline int_fast64_t RSA_encrypt(int_fast64_t msg, rsa_t *key) {
     return right_to_left(msg, key->e, key->n);
 }
 
+inline int_fast64_t RSA_sign(int_fast64_t msg, rsa_t *key) {
+    return RSA_decrypt(msg, key);
+}
+
 inline int_fast64_t RSA_decrypt(int_fast64_t text, rsa_t *key) {
     return right_to_left(text, key->d, key->n);
 }
