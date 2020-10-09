@@ -8,25 +8,16 @@
 #include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <p33EP512GM604.h>
 #include "rand.h"
 
-extern time_t _ns;
+static volatile time_t _ns;
+// Package utils/time.h
+extern time_t TIME_now_us(void);
 static bool _rand_init = false;
 
-void RAND_init(void) {
-    //TMR6 0; 
-    TMR6 = 0x00;
-    //Period = 0.0000000501 s; Frequency = 59904000 Hz; PR6 2; 
-    PR6 = 0x02;
-    //TCKPS 1:1; T32 16 Bit; TON enabled; TSIDL disabled; TCS FOSC/2; TGATE disabled; 
-    T6CON = 0x8000;
-
-    IFS2bits.T6IF = false;
-    IEC2bits.T6IE = true;
-}
-
 void RAND_init_seed(void) {
-    srand(_ns);
+    srand(TIME_now_us());
     _rand_init = true;
 }
 

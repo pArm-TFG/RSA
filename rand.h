@@ -39,12 +39,10 @@ typedef uint64_t time_t;
 #define time_t time_t
 #endif
 
-void RAND_init(void);
 void RAND_init_seed(void);
 void RAND_stop(void);
 int_fast64_t RAND(int_fast64_t min, int_fast64_t max);
 int RAND_random(void);
-void __attribute__ ((interrupt, no_auto_psv)) _T6Interrupt();
 
 #endif	/* RAND_H */
 
