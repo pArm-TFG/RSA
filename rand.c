@@ -16,8 +16,21 @@ static volatile time_t _ns;
 extern time_t TIME_now_us(void);
 static bool _rand_init = false;
 
+void RAND_init(void) {
+    _ns = 0ULL;
+    //TMR6 0; 
+    TMR6 = 0x00;
+    //Period = 0.000000217 s; Frequency = 59904000 Hz; PR6 12; 
+    PR6 = 0x0C;
+    //TCKPS 1:1; T32 16 Bit; TON enabled; TSIDL disabled; TCS FOSC/2; TGATE disabled; 
+    T6CON = 0x8000;
+    // Enable interrupt
+    IFS2bits.T6IF = 0;
+    IEC2bits.T6IE = 1;
+}
+
 void RAND_init_seed(void) {
-    srand(TIME_now_us());
+    srand(_ns);
     _rand_init = true;
 }
 
@@ -38,4 +51,9 @@ inline int RAND_random(void) {
     if (!_rand_init)
         return 0;
     return rand();
+}
+
+void __attribute__((interrupt, no_auto_psv)) _T6Interrupt(void) {
+    _ns += 217ULL;
+    IFS2bits.T6IF = 0;
 }
