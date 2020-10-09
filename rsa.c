@@ -34,8 +34,6 @@
 #include "rsa.h"
 #include "primes.h"
 
-static const int_fast64_t e = (int_fast64_t) ((2 << 15) + 1ULL);
-
 static int_fast64_t gcd(int_fast64_t u, int_fast64_t v) {
     int_fast64_t shift;
     if (u == 0ULL)
@@ -134,7 +132,7 @@ static bool is_valid_key(rsa_t *key) {
 
 rsa_t RSA_keygen() {
     rsa_t ret = {0LL};
-    ret.e = e;
+    ret.e = 65537LL;
     int_fast64_t p;
     int_fast64_t q;
     int_fast64_t n;
@@ -152,7 +150,7 @@ rsa_t RSA_keygen() {
             } while (gcd(p, q) != 1ULL);
             n = p * q;
             phi = (p - 1ULL) * (q - 1ULL);
-        } while (gcd(e, phi) != 1ULL);
+        } while (gcd(ret.e, phi) != 1ULL);
         ret.n = n;
         ret.phi = phi;
         ret.d = mod_inverse(ret.e, ret.phi);
