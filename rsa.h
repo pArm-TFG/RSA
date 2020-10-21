@@ -57,15 +57,65 @@
 #define MAX_PRIME_NUMBER 1299827ULL
 
 typedef struct {
+    /**
+     * In RSA, 'n' stands for the module.
+     */
     int_fast64_t n;
+    
+    /**
+     * In RSA, 'phi' equals: (p - 1) * (q - 1)
+     */
     int_fast64_t phi;
+    
+    /**
+     * In RSA, 'e' stands for "exponent".
+     */
     int_fast64_t e;
+    
+    /**
+     * In RSA, 'd' is the private key.
+     */
     int_fast64_t d;
-} rsa_t;
+} 
+/**
+ * Custom structure containing all the RSA required information.
+ */
+rsa_t;
 
+/**
+ * Generates new pseudo-random RSA keys. Those keys may be considered safe
+ * as they are composed upon prime numbers but their length is very small
+ * (32 bits).
+ * 
+ * @return rsa_t containing the new keys.
+ */
 rsa_t RSA_keygen(void);
+
+/**
+ * Encrypts the given message by using an already existing key.
+ * 
+ * @param msg - the message to be encrypted.
+ * @param key - the key used to encrypt the message.
+ * @return int_fast64_t representing the encrypted message.
+ */
 int_fast64_t RSA_encrypt(int_fast64_t msg, rsa_t *key);
+
+/**
+ * Decrypts the given message by using an already existing key.
+ * 
+ * @param text - the text to be decrypted.
+ * @param key - the key used to decrypt the message.
+ * @return int_fast64_t representing the decrypted message.
+ */
 int_fast64_t RSA_decrypt(int_fast64_t text, rsa_t *key);
+
+/**
+ * Digitally signs a given message by using the private key.
+ * 
+ * @param msg - the message to be signed.
+ * @param key - the key used to sign the message.
+ * @return int_fast64_t representing the signed message.
+ */
 int_fast64_t RSA_sign(int_fast64_t msg, rsa_t *key);
 
 #endif	/* RSA_H */

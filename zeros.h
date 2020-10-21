@@ -41,7 +41,20 @@
 
 extern const unsigned char clz_8b[256];
 
+/**
+ * Counts the amount of leading zeros of the given value.
+ * 
+ * @param x - the value to check.
+ * @return the amount of leading zeros.
+ */
 int_fast64_t clz(int_fast64_t x);
+
+/**
+ * Counts the amount of trailing zeros of the given value.
+ * 
+ * @param x - the value to check.
+ * @return the amount of trailing zeros.
+ */
 int_fast64_t ctz(int_fast64_t x);
 
 #endif	/* ZEROS_H */

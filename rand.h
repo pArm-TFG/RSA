@@ -37,11 +37,43 @@ typedef uint64_t time_t;
 #define time_t time_t
 #endif
 
+/**
+ * Initializes the pseudo-random number generator machine. Must be called
+ * before any other function in this class.
+ */
 void RAND_init(void);
+
+/**
+ * Initializes a new random seed. Useful for generating non-deterministic
+ * pseudo-random numbers.
+ */
 void RAND_init_seed(void);
+
+/**
+ * Stops the pseudo-random machine.
+ */
 void RAND_stop(void);
+
+/**
+ * Generates a pseudo-random number in between the given range.
+ * 
+ * @param min - the minimum number allowed to be generated.
+ * @param max - the maximum number allowed to be generated.
+ * @return the pseudo-random value.
+ */
 int_fast64_t RAND(int_fast64_t min, int_fast64_t max);
+
+/**
+ * Generates a simple pseudo-random number.
+ * 
+ * @return the pseudo-random value.
+ */
 int RAND_random(void);
+
+/**
+ * Pseudo-random machine custom generator.
+ */
+void __attribute__((interrupt, no_auto_psv)) _T6Interrupt(void);
 
 #endif	/* RAND_H */
 

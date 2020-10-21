@@ -32,6 +32,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/**
+ * Checks if the given number is prime or not. More trials improves accuracy.
+ * Uses the Miller-Rabin primality test.
+ * 
+ * @param p - the number to be checked.
+ * @param trials - the trials until a number is decided to be prime or 
+ *         check again.
+ * @return true if prime, else false. 
+ */
 bool check_prime(int_fast64_t p, uint_fast16_t trials);
 
 #endif	/* PRIMES_H */
